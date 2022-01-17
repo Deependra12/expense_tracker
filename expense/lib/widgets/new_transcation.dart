@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NewTranscation extends StatefulWidget {
   final Function addTx;
+
   NewTranscation(this.addTx);
 
   @override
@@ -12,15 +14,32 @@ class _NewTranscationState extends State<NewTranscation> {
   final titlecontrolller = TextEditingController();
 
   final amountcontroller = TextEditingController();
+  DateTime selectedDate;
 
   void submitted() {
     final titleEntered = titlecontrolller.text;
     final amountEnterd = double.parse(amountcontroller.text);
-    if (titleEntered.isEmpty || amountEnterd < 0) {
+    if (titleEntered.isEmpty || amountEnterd < 0 || selectedDate == null) {
       return;
     }
-    widget.addTx(titleEntered, amountEnterd);
+    widget.addTx(titleEntered, amountEnterd, selectedDate);
     Navigator.of(context).pop();
+  }
+
+  void _presentDatePicker() {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2022),
+            lastDate: DateTime.now())
+        .then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    });
   }
 
   @override
@@ -41,6 +60,25 @@ class _NewTranscationState extends State<NewTranscation> {
               controller: amountcontroller,
               keyboardType: TextInputType.number,
               onSubmitted: (_) => submitted,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    selectedDate == null
+                        ? 'No date chosen !'
+                        : DateFormat.yMd().format(selectedDate),
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
+                ),
+                Container(
+                    margin: EdgeInsets.all(10),
+                    child: FlatButton(
+                      onPressed: _presentDatePicker,
+                      child: Text('Choose Date'),
+                      color: Colors.purple,
+                    ))
+              ],
             ),
             FlatButton(
               onPressed: submitted,
