@@ -9,46 +9,37 @@ class TranscationList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height:300,
-      child: ListView(
-        children: transcations.map(
-          (trancation) {
-            return Card(
-                child: Row(
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.purple, width: 2)),
-                  child: Text(
-                    trancation.amount.toString(),
-                    style: const TextStyle(
-                      color: Colors.purple,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+      height: 300,
+      child:transcations.isEmpty ? const Text('no transcations'): ListView.builder(
+              itemBuilder: (ctx, index) {
+                return Card(
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 5,
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Padding(
+                        padding: EdgeInsets.all(6),
+                        child: FittedBox(
+                          child: Text('\$${transcations[index].amount}'),
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      transcations[index].title,
+                      
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMd().format(transcations[index].date),
                     ),
                   ),
-                  padding: const EdgeInsets.all(20),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      trancation.title,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      DateFormat.yMMMEd().format(trancation.date),
-                      style: const TextStyle(fontSize: 15, color: Colors.grey),
-                    )
-                  ],
-                )
-              ],
-            ));
-          },
-        ).toList(),
-      ),
+                );
+              },
+              itemCount: transcations.length,
+            ),
     );
   }
 }
